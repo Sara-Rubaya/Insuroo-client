@@ -5,6 +5,9 @@ import router from './Router/Router.jsx'
 import { RouterProvider } from 'react-router'
 import 'flowbite';
 import AuthProvider from './Contexts/AuthContext/AuthProvider.jsx'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
