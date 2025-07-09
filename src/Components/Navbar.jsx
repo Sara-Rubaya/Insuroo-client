@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '../Contexts/AuthContext/AuthContext';
-import { Link, useNavigate } from 'react-router';
+import React, { useContext, useEffect, useState } from 'react';
+
 import toast from 'react-hot-toast';
+import { AuthContext } from '../Contexts/AuthContext/AuthProvider';
+import { Link, useNavigate } from 'react-router';
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -23,6 +24,11 @@ const Navbar = () => {
         console.error(err);
       });
   };
+
+  // Optional: prevent background scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : 'auto';
+  }, [menuOpen]);
 
   return (
     <nav className='bg-white border-gray-200 dark:bg-gray-900 shadow'>
@@ -55,6 +61,7 @@ const Navbar = () => {
             </Link>
           )}
 
+          {/* Dropdown */}
           {isOpen && (
             <div className='absolute top-12 right-0 z-50 rounded-xl shadow-md w-[40vw] md:w-[12vw] bg-white overflow-hidden text-sm'>
               <div className='flex flex-col cursor-pointer'>
@@ -67,6 +74,12 @@ const Navbar = () => {
 
                 {user ? (
                   <>
+                    <Link
+                      to='/profile'
+                      className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                    >
+                      Profile
+                    </Link>
                     <Link
                       to='/dashboard'
                       className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
@@ -129,9 +142,9 @@ const Navbar = () => {
 
         {/* Main Links */}
         <div
-          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
-            menuOpen ? '' : 'hidden'
-          }`}
+          className={`items-center justify-between w-full ${
+            menuOpen ? 'flex' : 'hidden'
+          } md:flex md:w-auto md:order-1`}
           id='navbar-user'
         >
           <ul className='flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 
@@ -163,7 +176,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                to='/faq'
+                to='/faqs'
                 className='block py-2 px-3 text-gray-900 rounded-sm hover:bg-violet-500 md:hover:bg-transparent md:hover:text-violet-700 md:p-0 dark:text-white md:dark:hover:text-violet-500'
               >
                 FAQs
