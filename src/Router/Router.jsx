@@ -11,6 +11,8 @@ import FAQsPage from "../Pages/FAQPage";
 import AddPolicy from "../Pages/AddPolicies";
 import AllPolicies from "../Pages/AllPolicies";
 import PolicyDetails from "../Pages/PolicyDetails";
+import QuotePage from "../Pages/QuotePage";
+import ApplicationFormPage from "../Pages/ApplicationFormPage";
 
 const router = createBrowserRouter([
   {
@@ -53,7 +55,16 @@ const router = createBrowserRouter([
       {
         path:"policy/:id",
         Component: PolicyDetails
+      },
+      {
+        path:'quote',
+        Component:QuotePage
+      },
+      {
+        path: 'apply',
+        Component: ApplicationFormPage
       }
+
     ]
   },
 ]);

@@ -18,7 +18,8 @@ const AddPolicy = () => {
     benefits: '',
     termLength: '',
     premiumCalculation: '',
-    agentContact: ''
+    agentContact: '',
+    coverage: '', 
   });
 
   const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -60,7 +61,8 @@ const AddPolicy = () => {
           benefits: '',
           termLength: '',
           premiumCalculation: '',
-          agentContact: ''
+          agentContact: '',
+          coverage: '', // ✅ reset coverage
         });
       }
     } catch (error) {
@@ -74,7 +76,6 @@ const AddPolicy = () => {
       <h2 className="text-2xl font-bold mb-4">Add New Insurance Policy</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-
         <input
           name="title"
           value={policy.title}
@@ -147,7 +148,14 @@ const AddPolicy = () => {
           className="w-full border p-2 rounded"
         />
 
-        
+        <input
+          name="coverage"
+          value={policy.coverage}
+          onChange={handleChange}
+          placeholder="Coverage Amount (e.g., $100,000)"
+          required
+          className="w-full border p-2 rounded"
+        />
 
         <div className="flex gap-4">
           <button

@@ -190,6 +190,27 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
+            {/* Conditionally render these if user is logged in */}
+        {user && (
+          <>
+            <li>
+              <Link
+                to='/quote'
+                className='block py-2 px-3 text-gray-900 rounded-sm hover:bg-violet-500 md:hover:bg-transparent md:hover:text-violet-700 md:p-0 dark:text-white md:dark:hover:text-violet-500'
+              >
+                Quote
+              </Link>
+            </li>
+            <li>
+              <Link
+                to='/dashboard'
+                className='block py-2 px-3 text-gray-900 rounded-sm hover:bg-violet-500 md:hover:bg-transparent md:hover:text-violet-700 md:p-0 dark:text-white md:dark:hover:text-violet-500'
+              >
+                Dashboard
+              </Link>
+            </li>
+          </>
+        )}
           </ul>
         </div>
       </div>

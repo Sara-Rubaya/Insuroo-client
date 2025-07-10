@@ -39,7 +39,7 @@ const Benefits = () => {
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-white">
-          Benefits of <span className="text-pink-600">LifeSure</span>
+          Benefits of <span className="text-pink-600">Insuroo</span>
         </h2>
         <p className="text-gray-600 dark:text-gray-300 mb-12">
           Everything you need to protect your loved ones—simple, fast, and secure.
