@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../Contexts/AuthContext/AuthProvider';
-import { Link, useNavigate } from 'react-router';
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -24,11 +23,6 @@ const Navbar = () => {
         console.error(err);
       });
   };
-
-  // Optional: prevent background scroll when mobile menu is open
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : 'auto';
-  }, [menuOpen]);
 
   return (
     <nav className='bg-white border-gray-200 dark:bg-gray-900 shadow'>
@@ -86,6 +80,12 @@ const Navbar = () => {
                     >
                       Dashboard
                     </Link>
+                    <Link
+                      to='/add-policy'
+                      className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                    >
+                      Add Policies
+                    </Link>
                     <div
                       onClick={handleLogout}
                       className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
@@ -142,9 +142,9 @@ const Navbar = () => {
 
         {/* Main Links */}
         <div
-          className={`items-center justify-between w-full ${
-            menuOpen ? 'flex' : 'hidden'
-          } md:flex md:w-auto md:order-1`}
+          className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
+            menuOpen ? '' : 'hidden'
+          }`}
           id='navbar-user'
         >
           <ul className='flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 
@@ -176,7 +176,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                to='/faqs'
+                to='/faq'
                 className='block py-2 px-3 text-gray-900 rounded-sm hover:bg-violet-500 md:hover:bg-transparent md:hover:text-violet-700 md:p-0 dark:text-white md:dark:hover:text-violet-500'
               >
                 FAQs
