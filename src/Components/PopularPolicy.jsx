@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 const PopularPolicies = () => {
   const [policies, setPolicies] = useState([]);
@@ -9,9 +10,9 @@ const PopularPolicies = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/api/policies?sort=popular`)
+      .get(`${BACKEND_URL}/api/policies/popular`)
       .then((res) => {
-        setPolicies(res.data.slice(0, 6));
+        setPolicies(res.data);
       })
       .catch((err) => {
         console.error('Failed to fetch popular policies:', err);
@@ -29,19 +30,22 @@ const PopularPolicies = () => {
           {policies.map((policy) => (
             <div
               key={policy._id}
-              className="bg-base-100  border-base-300 rounded-lg p-6 shadow-2xl hover:shadow-md transition"
+              className="bg-base-100 border-base-300 rounded-lg p-6 shadow-2xl hover:shadow-md transition"
             >
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {policy.title}
               </h3>
               <p className="mb-1 text-gray-800 dark:text-gray-300">
-                <strong className="text-gray-700 dark:text-gray-200">Coverage:</strong> {policy.coverage || 'N/A'}
+                <strong className="text-gray-700 dark:text-gray-200">Coverage:</strong>{' '}
+                {policy.coverage || 'N/A'}
               </p>
               <p className="mb-1 text-gray-800 dark:text-gray-300">
-                <strong className="text-gray-700 dark:text-gray-200">Term:</strong> {policy.termLength || 'N/A'}
+                <strong className="text-gray-700 dark:text-gray-200">Term:</strong>{' '}
+                {policy.termLength || 'N/A'}
               </p>
               <p className="mb-4 text-gray-800 dark:text-gray-300">
-                <strong className="text-gray-700 dark:text-gray-200">Popularity:</strong> {policy.popularity || 0} purchases
+                <strong className="text-gray-700 dark:text-gray-200">Visits:</strong>{' '}
+                {policy.visits || 0}
               </p>
               <button
                 onClick={() => navigate(`/policy/${policy._id}`)}

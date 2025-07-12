@@ -81,6 +81,12 @@ const Navbar = () => {
                       Dashboard
                     </Link>
                     <Link
+                      to='/be-an-agent'
+                      className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                    >
+                      Be an Agent
+                    </Link>
+                    <Link
                       to='/add-policy'
                       className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
                     >

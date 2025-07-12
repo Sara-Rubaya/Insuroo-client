@@ -1,6 +1,4 @@
-import {
-  createBrowserRouter,
-} from "react-router";
+
 import RootLayout from "../Layout/RootLayout";
 import Home from "../Pages/Home";
 import Login from "../Pages/Login";
@@ -13,60 +11,102 @@ import AllPolicies from "../Pages/AllPolicies";
 import PolicyDetails from "../Pages/PolicyDetails";
 import QuotePage from "../Pages/QuotePage";
 import ApplicationFormPage from "../Pages/ApplicationFormPage";
+import PrivateRoute from "./PrivateRoute";
+import BeAgent from "../Components/Home/BeAgent";
+import { createBrowserRouter } from "react-router";
+import DashboardLayout from "../Layout/DashboardLayout";
+import MakeAgent from "../Pages/Dashboard/MakeAgent";
+import MyApplications from "../Pages/Dashboard/MyApplications";
+
+
+
+
 
 const router = createBrowserRouter([
   {
     path: "/",
-    Component:RootLayout,
-    children:[
-        {
-            index:true,
-            Component:Home
-        },
-        {
-            path:'login',
-            Component:Login
-        },
-        {
-            path:'register',
-            Component: Register
-        },
-      
-        {
+    Component: RootLayout,
+    children: [
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        path: 'login',
+        Component: Login,
+      },
+      {
+        path: 'register',
+        Component: Register,
+      },
+      {
         path: 'blogs/:blogId',
-        Component: BlogDetails
+        Component: BlogDetails,
       },
       {
-        path:'profile',
-        Component:ProfilePage
+        path: 'profile',
+        Component: ProfilePage,
       },
       {
-        path:'faqs',
-        Component:FAQsPage
+        path: 'faq',
+        Component: FAQsPage,
       },
       {
-        path:'add-policy',
-        Component:AddPolicy
+        path: 'add-policy',
+        Component: () => (
+          <PrivateRoute>
+            <AddPolicy />
+          </PrivateRoute>
+        ),
       },
       {
         path: 'all-policies',
-        Component:AllPolicies
+        Component: AllPolicies,
       },
       {
-        path:"policy/:id",
-        Component: PolicyDetails
+        path: "policy/:id",
+        Component: PolicyDetails,
       },
       {
-        path:'quote',
-        Component:QuotePage
+        path: 'quote',
+        Component: QuotePage,
       },
       {
         path: 'apply',
-        Component: ApplicationFormPage
-      }
-
-    ]
+        Component: ApplicationFormPage,
+      },
+      {
+        path: 'be-an-agent',
+        Component: BeAgent,
+      },
+      
+    
+    ],
   },
+  {
+    path: 'dashboard',
+    element: <PrivateRoute>
+      <DashboardLayout></DashboardLayout>
+    </PrivateRoute>,
+    children:[
+      {
+        index: true,
+        Component:DashboardLayout
+      },
+     
+      {
+        path:'make-agent',
+        Component: MakeAgent
+
+      },
+    {
+      path:'myPolicies',
+      Component: MyApplications
+    }
+     
+    ]
+  }
+
 ]);
 
 export default router;

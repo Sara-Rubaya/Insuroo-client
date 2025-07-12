@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router';
+import { AuthContext } from '../Contexts/AuthContext/AuthProvider';
 
 const PolicyDetails = () => {
+    const {user } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
   const [policy, setPolicy] = useState(null);
@@ -54,11 +56,11 @@ const PolicyDetails = () => {
 
       <div className="flex flex-wrap gap-4 mb-8">
         <button
-          onClick={() => navigate('/get-quote')}
-          className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-5 py-2 rounded"
-        >
-          Get Quote
-        </button>
+  onClick={() => (user ? navigate('/quote') : navigate('/login'))}
+  className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-5 py-2 rounded"
+>
+  Get Quote
+</button>
         <form onSubmit={handleConsultationSubmit} className="flex flex-col md:flex-row gap-2">
           <input
             type="text"

@@ -6,8 +6,7 @@ import { Link } from 'react-router';
 
 const Slider = () => {
   return (
-    <div data-aos="fade-up"
-     data-aos-anchor-placement="top-center" className="h-[97vh] bg-white dark:bg-gray-900 flex flex-col-reverse md:flex-row items-center justify-between px-4 md:px-20">
+    <div  className="h-[97vh] bg-white dark:bg-gray-900 flex flex-col-reverse md:flex-row items-center justify-between px-4 md:px-20">
       {/* Text content */}
       <div className="text-center md:text-left max-w-xl z-10">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">

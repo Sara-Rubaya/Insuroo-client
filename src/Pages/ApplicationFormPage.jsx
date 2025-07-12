@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -20,7 +20,7 @@ const ApplicationFormPage = () => {
 
   const [application, setApplication] = useState({
     personalName: '',
-    email: user?.email || '',
+    email: '',
     address: '',
     nid: '',
     nomineeName: '',
@@ -29,6 +29,13 @@ const ApplicationFormPage = () => {
   });
 
   const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+  // Update email when user context updates
+  useEffect(() => {
+    if (user?.email) {
+      setApplication((prev) => ({ ...prev, email: user.email }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
@@ -65,7 +72,6 @@ const ApplicationFormPage = () => {
       return;
     }
 
-    // Confirmation alert before submitting
     const result = await Swal.fire({
       title: 'Confirm Submission',
       text: 'Are you sure you want to submit your application?',
@@ -75,10 +81,7 @@ const ApplicationFormPage = () => {
       cancelButtonText: 'Cancel',
     });
 
-    if (!result.isConfirmed) {
-      // User cancelled submission
-      return;
-    }
+    if (!result.isConfirmed) return;
 
     try {
       const newApplication = {
@@ -97,6 +100,7 @@ const ApplicationFormPage = () => {
           showConfirmButton: false,
           timer: 1500,
         });
+
         setApplication({
           personalName: '',
           email: user.email,
@@ -106,7 +110,8 @@ const ApplicationFormPage = () => {
           nomineeRelationship: '',
           healthDisclosure: [],
         });
-        navigate('/dashboard'); // Redirect after submission
+
+        navigate('/dashboard');
       }
     } catch (error) {
       toast.error('Failed to submit application');
@@ -119,7 +124,6 @@ const ApplicationFormPage = () => {
       <h2 className="text-2xl font-bold mb-6">Insurance Application Form</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Personal Info */}
         <input
           type="text"
           name="personalName"
@@ -159,7 +163,6 @@ const ApplicationFormPage = () => {
           className="w-full border p-2 rounded"
         />
 
-        {/* Nominee */}
         <input
           type="text"
           name="nomineeName"
@@ -180,7 +183,6 @@ const ApplicationFormPage = () => {
           className="w-full border p-2 rounded"
         />
 
-        {/* Health Disclosure */}
         <div className="mt-4">
           <p className="font-semibold mb-2">Health Disclosure</p>
           <div className="flex flex-wrap gap-4">

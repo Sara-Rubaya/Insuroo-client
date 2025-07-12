@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 const useAxiosSecure = () => {
   const axiosSecure = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: `https://insuroo-server.vercel.app`,
     withCredentials: true, // for cookie-based auth
   });
 
