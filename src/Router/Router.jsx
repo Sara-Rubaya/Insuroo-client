@@ -17,6 +17,8 @@ import { createBrowserRouter } from "react-router";
 import DashboardLayout from "../Layout/DashboardLayout";
 import MakeAgent from "../Pages/Dashboard/MakeAgent";
 import MyApplications from "../Pages/Dashboard/MyApplications";
+import ManageUsers from "../Pages/Dashboard/ManageUsers";
+import MakeAdmin from "../Pages/Dashboard/MakeAdmin";
 
 
 
@@ -102,6 +104,14 @@ const router = createBrowserRouter([
     {
       path:'myPolicies',
       Component: MyApplications
+    },
+    {
+      path: 'manageUsers',
+      Component: ManageUsers
+    },
+    {
+      path:'makeAdmin',
+      Component: MakeAdmin
     }
      
     ]
