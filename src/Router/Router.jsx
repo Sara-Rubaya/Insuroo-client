@@ -135,7 +135,7 @@ const router = createBrowserRouter([
       Component:ManagePolicyApplications
     },
     {
-      path:'payment',
+      path:'payment/:id',
       Component:PaymentPage
     }
      
