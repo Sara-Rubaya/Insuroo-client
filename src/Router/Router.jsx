@@ -19,6 +19,7 @@ import MakeAgent from "../Pages/Dashboard/MakeAgent";
 import MyApplications from "../Pages/Dashboard/MyApplications";
 import ManageUsers from "../Pages/Dashboard/ManageUsers";
 import MakeAdmin from "../Pages/Dashboard/MakeAdmin";
+import ManageApplications from "../Pages/Dashboard/ManageApplications";
 
 
 
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
     {
       path:'makeAdmin',
       Component: MakeAdmin
+    },
+    {
+      path:'manageApplications',
+      Component:ManageApplications
     }
      
     ]

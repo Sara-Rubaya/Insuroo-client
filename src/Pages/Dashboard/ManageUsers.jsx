@@ -1,138 +1,171 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+import { FaSearch, FaTrashAlt, FaUserShield, FaUser } from "react-icons/fa";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [filterRole, setFilterRole] = useState('all');
+  const axiosSecure = useAxiosSecure();
+  const [searchEmail, setSearchEmail] = useState("");
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const {
+    data: users = [],
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["users", searchEmail],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        searchEmail
+          ? `/api/users/search?email=${searchEmail}`
+          : `/api/users`
+      );
+      return res.data;
+    },
+  });
 
-  const fetchUsers = async () => {
-    try {
-      const res = await axios.get('https://insuroo-server.vercel.app/api/users');
-      setUsers(res.data);
-    } catch (err) {
-      console.error('Failed to fetch users', err);
-    }
-  };
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ id, role }) =>
+      await axiosSecure.patch(`/api/users/${id}/role`, { role }),
+    onSuccess: () => {
+      Swal.fire("Success", "Role updated", "success");
+      refetch();
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to update role", "error");
+    },
+  });
 
-  const updateRole = async (userId, newRole) => {
-    try {
-      await axios.patch(`https://insuroo-server.vercel.app/api/users/${userId}/role`, {
-        role: newRole
-      });
-      Swal.fire('Success', `User role updated to ${newRole}`, 'success');
-      fetchUsers();
-    } catch (err) {
-      Swal.fire('Error', 'Could not update role', err);
-    }
-  };
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id) =>
+      await axiosSecure.delete(`/api/users/${id}`),
+    onSuccess: () => {
+      Swal.fire("Deleted", "User removed", "success");
+      refetch();
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to delete user", "error");
+    },
+  });
 
-  const deleteUser = async (userId) => {
-    const confirm = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'This action is irreversible!',
-      icon: 'warning',
+  const handleRoleChange = (user) => {
+    const nextRole =
+      user.role === "admin"
+        ? "customer"
+        : user.role === "agent"
+        ? "admin"
+        : "agent";
+
+    Swal.fire({
+      title: `Change role to "${nextRole}"?`,
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete',
-      cancelButtonText: 'Cancel'
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateRoleMutation.mutate({ id: user._id, role: nextRole });
+      }
     });
-    if (!confirm.isConfirmed) return;
-
-    try {
-      await axios.delete(`https://insuroo-server.vercel.app/api/users/${userId}`);
-      Swal.fire('Deleted', 'User has been deleted', 'success');
-      fetchUsers();
-    } catch (err) {
-      Swal.fire('Error', 'Could not delete user', err);
-    }
   };
 
-  const filteredUsers =
-    filterRole === 'all'
-      ? users
-      : users.filter((u) => u.role === filterRole);
+  const handleDelete = (user) => {
+    Swal.fire({
+      title: `Delete ${user.email}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteUserMutation.mutate(user._id);
+      }
+    });
+  };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-4xl font-bold mb-6">Manage Users</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-4">Manage Users</h2>
 
-      {/* Role filter */}
-      <div className="mb-4">
-        <label className="mr-2">Filter by role:</label>
-        <select
-          value={filterRole}
-          onChange={(e) => setFilterRole(e.target.value)}
-          className="border px-3 py-2 rounded"
-        >
-          <option value="all">All</option>
-          <option value="customer">Customer</option>
-          <option value="agent">Agent</option>
-          <option value="admin">Admin</option>
-        </select>
+      {/* Search Bar */}
+      <div className="flex gap-2 mb-4 items-center">
+        <FaSearch />
+        <input
+          type="text"
+          className="input input-bordered w-full max-w-md"
+          placeholder="Search user by email"
+          value={searchEmail}
+          onChange={(e) => setSearchEmail(e.target.value)}
+        />
       </div>
 
-      {/* Users table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 border">Name</th>
-              <th className="px-4 py-2 border">Email</th>
-              <th className="px-4 py-2 border">Role</th>
-              <th className="px-4 py-2 border">Registered</th>
-              <th className="px-4 py-2 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user._id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{user.name}</td>
-                <td className="px-4 py-2 border">{user.email}</td>
-                <td className="px-4 py-2 border capitalize">{user.role}</td>
-                <td className="px-4 py-2 border">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-2 border space-y-2">
-                  {user.role === 'customer' && (
-                    <button
-                      onClick={() => updateRole(user._id, 'agent')}
-                      className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 w-full"
-                    >
-                      Promote to Agent
-                    </button>
-                  )}
-                  {user.role === 'agent' && (
-                    <button
-                      onClick={() => updateRole(user._id, 'customer')}
-                      className="bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700 w-full"
-                    >
-                      Demote to Customer
-                    </button>
-                  )}
-                  {/* Optional delete */}
-                  <button
-                    onClick={() => deleteUser(user._id)}
-                    className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 w-full"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {filteredUsers.length === 0 && (
+      {isFetching ? (
+        <p>Loading users...</p>
+      ) : users.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table table-zebra w-full">
+            <thead>
               <tr>
-                <td colSpan="5" className="text-center py-4 text-gray-500">
-                  No users found.
-                </td>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Registered</th>
+                <th>Action</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u._id}>
+                  <td>{u.email}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        u.role === "admin"
+                          ? "badge-success"
+                          : u.role === "agent"
+                          ? "badge-info"
+                          : "badge-ghost"
+                      }`}
+                    >
+                      {u.role || "customer"}
+                    </span>
+                  </td>
+                  <td>
+                    {u.createdAt
+                      ? new Date(u.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </td>
+                  <td className="flex gap-2">
+                    <button
+                      onClick={() => handleRoleChange(u)}
+                      className={`btn btn-xs ${
+                        u.role === "admin"
+                          ? "btn-error"
+                          : "btn-primary"
+                      }`}
+                    >
+                      {u.role === "admin" ? (
+                        <>
+                          <FaUser className="mr-1" /> Remove Admin
+                        </>
+                      ) : (
+                        <>
+                          <FaUserShield className="mr-1" /> Promote
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(u)}
+                      className="btn btn-xs btn-outline btn-error"
+                    >
+                      <FaTrashAlt className="mr-1" /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
