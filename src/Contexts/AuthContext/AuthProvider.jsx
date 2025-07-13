@@ -52,31 +52,50 @@ const AuthProvider = ({ children }) => {
 
   // onAuthStateChange
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async currentUser => {
-      console.log('CurrentUser-->', currentUser?.email)
-      if (currentUser?.email) {
-        setUser(currentUser)
+  const unsubscribe = onAuthStateChanged(auth, async currentUser => {
+    console.log('CurrentUser-->', currentUser?.email)
 
-        // Get JWT token
+    if (currentUser?.email) {
+      setUser(currentUser)
+
+     
+      try {
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/jwt`,
+          `${import.meta.env.VITE_API_URL}/api/users`,
           {
-            email: currentUser?.email,
+            email: currentUser.email,
+            displayName: currentUser.displayName || 'Anonymous',
+            photoURL: currentUser.photoURL || '',
+            role: 'customer', // default role
+            createdAt: new Date(),
           },
           { withCredentials: true }
         )
-      } else {
-        setUser(currentUser)
-        await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
-          withCredentials: true,
-        })
+      } catch (error) {
+        console.error('Failed to save user to MongoDB:', error)
       }
-      setLoading(false)
-    })
-    return () => {
-      return unsubscribe()
+
+    
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/jwt`,
+        {
+          email: currentUser?.email,
+        },
+        { withCredentials: true }
+      )
+    } else {
+      setUser(currentUser)
+      await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
+        withCredentials: true,
+      })
     }
-  }, [])
+
+    setLoading(false)
+  })
+
+  return () => unsubscribe()
+}, [])
+
 
   const authInfo = {
     user,

@@ -20,6 +20,10 @@ import MyApplications from "../Pages/Dashboard/MyApplications";
 import ManageUsers from "../Pages/Dashboard/ManageUsers";
 import MakeAdmin from "../Pages/Dashboard/MakeAdmin";
 import ManageApplications from "../Pages/Dashboard/ManageApplications";
+import ManagePolicies from "../Pages/Dashboard/ManagePolicies";
+import ApplyPolicy from "../Pages/Dashboard/ApplyPolicy";
+import ManagePolicyApplications from "../Pages/Dashboard/ManagePolicyApplications";
+import PaymentPage from "../Pages/Dashboard/PaymentPage";
 
 
 
@@ -117,6 +121,22 @@ const router = createBrowserRouter([
     {
       path:'manageApplications',
       Component:ManageApplications
+    },
+    {
+      path:'managePolicy',
+      Component:ManagePolicies
+    },
+    {
+      path:'applyPolicy/:id',
+      Component:ApplyPolicy
+    },
+    {
+      path:'managePolicyApplications',
+      Component:ManagePolicyApplications
+    },
+    {
+      path:'payment',
+      Component:PaymentPage
     }
      
     ]
