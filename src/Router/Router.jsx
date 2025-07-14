@@ -24,6 +24,7 @@ import ManagePolicies from "../Pages/Dashboard/ManagePolicies";
 import ApplyPolicy from "../Pages/Dashboard/ApplyPolicy";
 import ManagePolicyApplications from "../Pages/Dashboard/ManagePolicyApplications";
 import PaymentPage from "../Pages/Dashboard/PaymentPage";
+import PaymentStatus from "../Pages/Dashboard/PaymentStatus";
 
 
 
@@ -137,6 +138,10 @@ const router = createBrowserRouter([
     {
       path:'payment/:id',
       Component:PaymentPage
+    },
+    {
+      path:'paymentStatus/:transactionId',
+      Component: PaymentStatus
     }
      
     ]

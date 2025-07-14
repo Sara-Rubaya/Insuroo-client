@@ -46,10 +46,12 @@ useEffect(() => {
           <thead className="bg-purple-700 text-white">
             <tr>
               <th className="py-3 px-4 text-left">Policy Name</th>
-              <th className="py-3 px-4 text-left">Personal Name</th>
+              <th className="py-3 px-4 text-left">Person Name</th>
               <th className="py-3 px-4 text-left">Nominee</th>
               <th className="py-3 px-4 text-left">Status</th>
               <th className="py-3 px-4 text-left">Submitted At</th>
+              <th className="py-3 px-4 text-left">Premium</th>
+
               <th className="py-3 px-4 text-left">Action</th>
             </tr>
           </thead>
@@ -77,6 +79,8 @@ useEffect(() => {
                 <td className="py-3 px-4">
                   {new Date(app.submittedAt).toLocaleDateString()}
                 </td>
+               <td className="py-3 px-4">{app.basePremiumRate ? `৳${app.basePremiumRate}` : 'N/A'}</td>
+
                 <td className="py-3 px-4">
                   {app.status === 'Approved' && (
                     <Link to={`/dashboard/payment/${app.policyId}`}>
