@@ -3,6 +3,7 @@ import Slider from '../Components/Home/Slider';
 import Benefits from '../Components/Home/Benefits';
 import CustomerReviews from '../Components/Home/CustomerReviews';
 import PopularPolicies from '../Components/PopularPolicy';
+import Blog from './Blogs/Blogs';
 
 
 const Home = () => {
@@ -12,6 +13,7 @@ const Home = () => {
             <PopularPolicies></PopularPolicies>
             <Benefits></Benefits>
             <CustomerReviews></CustomerReviews>
+            <Blog></Blog>
         </div>
        
     );
