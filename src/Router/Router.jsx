@@ -3,7 +3,7 @@ import RootLayout from "../Layout/RootLayout";
 import Home from "../Pages/Home";
 import Login from "../Pages/Login";
 import Register from "../Pages/Register";
-import BlogDetails from "../Pages/BlogDetails";
+
 import ProfilePage from "../Pages/ProfilePage";
 import FAQsPage from "../Pages/FAQPage";
 import AddPolicy from "../Pages/AddPolicies";
@@ -28,6 +28,8 @@ import PaymentStatus from "../Pages/Dashboard/PaymentStatus";
 import ClaimForm from "../Pages/Dashboard/ClaimForm";
 import ManageTransactions from "../Pages/Dashboard/ManageTransactions";
 import ManageBlogs from "../Pages/Blogs/ManageBlogs";
+import AddBlogs from "../Pages/Blogs/AddBlogs";
+import Blog from "../Pages/Blogs/Blogs";
 
 
 
@@ -50,10 +52,7 @@ const router = createBrowserRouter([
         path: 'register',
         Component: Register,
       },
-      {
-        path: 'blogs/:blogId',
-        Component: BlogDetails,
-      },
+      
       {
         path: 'profile',
         Component: ProfilePage,
@@ -152,8 +151,16 @@ const router = createBrowserRouter([
       Component:ManageTransactions
     },
     {
+      path:'addBlogs',
+      Component:AddBlogs
+    },
+    {
       path:'manage-blogs',
       Component:ManageBlogs
+    },
+    {
+      path:'blogs',
+      Component:Blog
     }
      
     ]
