@@ -12,9 +12,7 @@ const ManageApplications = () => {
   const { data: applications = [], refetch: refetchApplications } = useQuery({
     queryKey: ['policyApplications'],
     queryFn: async () => {
-      const res = await axiosSecure.get('/api/policyApplications', {
-        params: { userEmail: '' }, // যেহেতু আপনার backend এ userEmail query param দরকার, যদি না দরকার হয় তাহলে empty string দিন
-      });
+      const res = await axiosSecure.get('/api/policyApplications');
       return res.data;
     },
   });
@@ -121,41 +119,44 @@ const ManageApplications = () => {
               </td>
 
               <td className="px-6 py-3 flex flex-wrap gap-2 items-center">
-                {/* Assign Agent Dropdown */}
-                <select
-                  defaultValue=""
-                  onChange={(e) => handleAssignAgent(app._id, e.target.value)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
-                >
-                  <option value="" disabled>
-                    Assign Agent
-                  </option>
-                  {agentsLoading ? (
-                    <option disabled>Loading...</option>
-                  ) : (
-                    agents.map((agent) => (
-                      <option key={agent._id} value={agent.email}>
-                        {agent.displayName || agent.email}
-                      </option>
-                    ))
-                  )}
-                </select>
+                {app.assignedAgent ? (
+                  <button className="bg-green-600 text-white px-3 py-1 rounded cursor-default text-sm" disabled>
+                    Assigned
+                  </button>
+                ) : (
+                  <select
+                    defaultValue=""
+                    onChange={(e) => handleAssignAgent(app._id, e.target.value)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
+                  >
+                    <option value="" disabled>
+                      Assign Agent
+                    </option>
+                    {agentsLoading ? (
+                      <option disabled>Loading...</option>
+                    ) : (
+                      agents.map((agent) => (
+                        <option key={agent._id} value={agent.email}>
+                          {agent.displayName || agent.email}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                )}
 
-                {/* Reject Button */}
                 <button
                   onClick={() => handleReject(app._id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
                 >
                   Reject
                 </button>
 
-                {/* View Details Button */}
                 <button
                   onClick={() => {
                     setSelectedApplication(app);
                     setModalOpen(true);
                   }}
-                  className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
+                  className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded text-sm"
                 >
                   View Details
                 </button>
@@ -184,8 +185,9 @@ const ManageApplications = () => {
             </p>
             <p>
               <strong>Nominee:</strong>{' '}
-              {selectedApplication.nomineeName} (
-              {selectedApplication.nomineeRelationship})
+              {selectedApplication.nomineeName} ({
+                selectedApplication.nomineeRelationship
+              })
             </p>
             <p>
               <strong>Status:</strong> {selectedApplication.status}
