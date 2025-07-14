@@ -1,177 +1,278 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
-const ManageApplications = () => {
+const MakeAgent = () => {
+  const axiosSecure = useAxiosSecure();
+  const [selectedTab, setSelectedTab] = useState("pending");
+  const [rejectingAgent, setRejectingAgent] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
 
-  const [allApplications, setAllApplications] = useState([]); // original list for search
-  const [agents, setAgents] = useState([]);
-  const [selectedApp, setSelectedApp] = useState(null);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  // Fetch pending agents
+  const {
+    data: pendingAgents = [],
+    isLoading: loadingPending,
+    refetch: refetchPending,
+  } = useQuery({
+    queryKey: ["pendingAgents"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/api/agents?status=pending");
+      return res.data;
+    },
+  });
 
-  useEffect(() => {
-    fetchApplications();
-    fetchAgents();
-  }, []);
+  // Fetch approved agents
+  const {
+    data: approvedAgents = [],
+    isLoading: loadingApproved,
+    refetch: refetchApproved,
+  } = useQuery({
+    queryKey: ["approvedAgents"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/api/agents?status=approved");
+      return res.data;
+    },
+  });
 
-  const fetchApplications = async () => {
-    try {
-      const res = await axios.get('https://insuroo-server.vercel.app/api/applications');
-      setAllApplications(res.data); // keep full list
-    } catch (err) {
-      console.error('Error fetching applications', err);
+  // Approve agent
+  const approveAgentMutation = useMutation({
+    mutationFn: async (agentId) => {
+      return axiosSecure.patch(`/api/agents/${agentId}/approve`);
+    },
+    onSuccess: () => {
+      Swal.fire("Success", "Agent approved successfully!", "success");
+      refetchPending();
+      refetchApproved();
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to approve agent.", "error");
+    },
+  });
+
+  // Demote agent
+  const demoteAgentMutation = useMutation({
+    mutationFn: async (agentId) => {
+      return axiosSecure.patch(`/api/agents/${agentId}/demote`);
+    },
+    onSuccess: () => {
+      Swal.fire("Success", "Agent demoted to customer.", "success");
+      refetchApproved();
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to demote agent.", "error");
+    },
+  });
+
+  // Reject agent
+  const rejectAgentMutation = useMutation({
+    mutationFn: async ({ agentId, reason }) => {
+      return axiosSecure.patch(`/api/agents/${agentId}/reject`, { reason });
+    },
+    onSuccess: () => {
+      Swal.fire("Success", "Agent application rejected.", "success");
+      setRejectingAgent(null);
+      setRejectReason("");
+      refetchPending();
+    },
+    onError: () => {
+      Swal.fire("Error", "Failed to reject application.", "error");
+    },
+  });
+
+  const handleApprove = (id) => {
+    approveAgentMutation.mutate(id);
+  };
+
+  const handleDemote = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Demoting agent will revoke their privileges.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, demote",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        demoteAgentMutation.mutate(id);
+      }
+    });
+  };
+
+  const handleOpenRejectModal = (agent) => {
+    setRejectingAgent(agent);
+  };
+
+  const handleRejectSubmit = () => {
+    if (!rejectReason.trim()) {
+      Swal.fire("Error", "Please enter rejection reason.", "error");
+      return;
     }
+    rejectAgentMutation.mutate({ agentId: rejectingAgent._id, reason: rejectReason });
   };
-
-  const fetchAgents = async () => {
-    try {
-      const res = await axios.get('https://insuroo-server.vercel.app/api/agents'); // update if needed
-      setAgents(res.data);
-    } catch (err) {
-      console.error('Error fetching agents', err);
-    }
-  };
-
-  const handleAssignAgent = async (appId, agentId) => {
-    try {
-      await axios.patch(`https://insuroo-server.vercel.app/api/applications/${appId}/assign`, { agentId });
-      Swal.fire('Success', 'Agent assigned successfully!', 'success');
-      fetchApplications();
-    } catch {
-      Swal.fire('Error', 'Failed to assign agent', 'error');
-    }
-  };
-
-  const handleReject = async (appId) => {
-    try {
-      await axios.patch(`https://insuroo-server.vercel.app/api/applications/${appId}/status`, { status: 'Rejected' });
-      Swal.fire('Rejected', 'Application has been rejected.', 'info');
-      fetchApplications();
-    } catch {
-      Swal.fire('Error', 'Failed to update status', 'error');
-    }
-  };
-
-  const handleViewDetails = (application) => {
-    setSelectedApp(application);
-    setViewModalOpen(true);
-  };
-
-  const getAgentName = (agentId) => {
-    return agents.find((a) => a._id === agentId)?.name || 'Not Assigned';
-  };
-
-  const filteredApplications = allApplications.filter((app) =>
-    app.personalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h2 className="text-4xl font-bold mb-6">Manage Applications</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-6 text-center">Manage Agents</h2>
 
-      {/* Search bar */}
-      <div className="mb-4 flex justify-end">
-        <input
-          type="text"
-          placeholder="Search by name or email"
-          className="border px-4 py-2 rounded w-full max-w-sm"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      {/* Tabs */}
+      <div className="tabs justify-center mb-6">
+        <button
+          className={`tab tab-lg tab-bordered ${selectedTab === "pending" ? "tab-active" : ""}`}
+          onClick={() => setSelectedTab("pending")}
+        >
+          Pending Applications
+        </button>
+        <button
+          className={`tab tab-lg tab-bordered ${selectedTab === "approved" ? "tab-active" : ""}`}
+          onClick={() => setSelectedTab("approved")}
+        >
+          All Current Agents
+        </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 border">Name</th>
-              <th className="px-4 py-2 border">Email</th>
-              <th className="px-4 py-2 border">Policy</th>
-              <th className="px-4 py-2 border">Status</th>
-              <th className="px-4 py-2 border">Assigned Agent</th>
-              <th className="px-4 py-2 border">Date</th>
-              <th className="px-4 py-2 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredApplications.map((app) => (
-              <tr key={app._id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{app.personalName}</td>
-                <td className="px-4 py-2 border">{app.email}</td>
-                <td className="px-4 py-2 border">{app.policyName || 'N/A'}</td>
-                <td className="px-4 py-2 border capitalize">{app.status}</td>
-                <td className="px-4 py-2 border">{getAgentName(app.assignedAgent)}</td>
-                <td className="px-4 py-2 border">{new Date(app.submittedAt).toLocaleDateString()}</td>
-                <td className="px-4 py-2 border space-y-2">
-                  <select
-                    className="border rounded px-2 py-1 mb-2 w-full"
-                    defaultValue=""
-                    onChange={(e) => handleAssignAgent(app._id, e.target.value)}
-                  >
-                    <option value="">Assign Agent</option>
-                    {agents.map((agent) => (
-                      <option key={agent._id} value={agent._id}>
-                        {agent.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => handleReject(app._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-full"
-                  >
-                    ❌ Reject
-                  </button>
-                  <button
-                    onClick={() => handleViewDetails(app)}
-                    className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 w-full"
-                  >
-                    📄 View Details
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {!filteredApplications.length && (
-              <tr>
-                <td colSpan="7" className="text-center py-4 text-gray-500">
-                  No applications found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* View Details Modal */}
-      {viewModalOpen && selectedApp && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 p-4">
-          <div className="bg-white max-w-md w-full rounded-lg p-6 relative">
-            <button
-              onClick={() => setViewModalOpen(false)}
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
-            >
-              ✖
-            </button>
-            <h3 className="text-2xl font-semibold mb-4">Application Details</h3>
-            <div className="space-y-1 text-sm">
-              <p><strong>Name:</strong> {selectedApp.personalName}</p>
-              <p><strong>Email:</strong> {selectedApp.email}</p>
-              <p><strong>Address:</strong> {selectedApp.address}</p>
-              <p><strong>Policy:</strong> {selectedApp.policyName}</p>
-              <p><strong>NID:</strong> {selectedApp.nid}</p>
-              <p><strong>Nominee:</strong> {selectedApp.nomineeName}</p>
-              <p><strong>Nominee Relation:</strong> {selectedApp.nomineeRelationship}</p>
-              <p><strong>Health Disclosures:</strong> {selectedApp.healthDisclosure?.join(', ') || 'None'}</p>
-              <p><strong>Status:</strong> {selectedApp.status}</p>
-              <p><strong>Submitted:</strong> {new Date(selectedApp.submittedAt).toLocaleString()}</p>
-              <p><strong>Assigned Agent:</strong> {getAgentName(selectedApp.assignedAgent)}</p>
+      {/* Pending Tab */}
+      {selectedTab === "pending" && (
+        <>
+          {loadingPending ? (
+            <p>Loading pending applications...</p>
+          ) : pendingAgents.length === 0 ? (
+            <p className="text-center text-gray-500">No pending agent applications.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full divide-y divide-gray-200">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                    <th>Experience</th>
+                    <th>Message</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingAgents.map((agent) => (
+                    <tr
+                      key={agent._id}
+                      className="bg-white hover:bg-gray-50 transition rounded-lg shadow mb-2"
+                    >
+                      <td className="py-3">{agent.fullName}</td>
+                      <td className="py-3">{agent.email}</td>
+                      <td className="py-3">{agent.phone}</td>
+                      <td className="py-3">{agent.city}</td>
+                      <td className="py-3">{agent.experience}</td>
+                      <td className="py-3">{agent.message}</td>
+                      <td className="py-3 flex flex-col sm:flex-row gap-2">
+                        <button
+                          className="px-4 py-1 bg-green-600 hover:bg-green-700 text-white rounded shadow text-sm"
+                          onClick={() => handleApprove(agent._id)}
+                          disabled={approveAgentMutation.isLoading}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="px-4 py-1 bg-red-600 hover:bg-red-700 text-white rounded shadow text-sm"
+                          onClick={() => handleOpenRejectModal(agent)}
+                          disabled={rejectAgentMutation.isLoading}
+                        >
+                          Reject
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
+
+      {/* Approved Tab */}
+      {selectedTab === "approved" && (
+        <>
+          {loadingApproved ? (
+            <p>Loading approved agents...</p>
+          ) : approvedAgents.length === 0 ? (
+            <p className="text-center text-gray-500">No approved agents found.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full divide-y divide-gray-200">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                    <th>Experience</th>
+                    <th>Message</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {approvedAgents.map((agent) => (
+                    <tr
+                      key={agent._id}
+                      className="bg-white hover:bg-gray-50 transition rounded-lg shadow mb-2"
+                    >
+                      <td className="py-3">{agent.fullName}</td>
+                      <td className="py-3">{agent.email}</td>
+                      <td className="py-3">{agent.phone}</td>
+                      <td className="py-3">{agent.city}</td>
+                      <td className="py-3">{agent.experience}</td>
+                      <td className="py-3">{agent.message}</td>
+                      <td className="py-3">
+                        <button
+                          className="px-4 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded shadow text-sm"
+                          onClick={() => handleDemote(agent._id)}
+                          disabled={demoteAgentMutation.isLoading}
+                        >
+                          Demote
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Reject Modal */}
+      <dialog id="rejectModal" className="modal" open={!!rejectingAgent} onClose={() => setRejectingAgent(null)}>
+        <form method="dialog" className="modal-box" onSubmit={(e) => { e.preventDefault(); handleRejectSubmit(); }}>
+          <h3 className="font-bold text-lg mb-4">Reject Agent Application</h3>
+          <p className="mb-2">
+            Please provide a reason for rejecting the application of <strong>{rejectingAgent?.fullName}</strong>:
+          </p>
+          <textarea
+            className="textarea textarea-bordered w-full mb-4"
+            rows={4}
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="Enter rejection reason"
+            required
+          ></textarea>
+          <div className="modal-action">
+            <button type="submit" className="btn btn-error">
+              Submit Reject
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                setRejectingAgent(null);
+                setRejectReason("");
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </dialog>
     </div>
   );
 };
 
-export default ManageApplications;
+export default MakeAgent;

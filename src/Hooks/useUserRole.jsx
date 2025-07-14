@@ -1,24 +1,38 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { useContext } from 'react';
-
-import useAxiosSecure from './useAxiosSecure';
+import { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 import { AuthContext } from '../Contexts/AuthContext/AuthProvider';
 
+
 const useUserRole = () => {
-  const axiosSecure = useAxiosSecure();
   const { user } = useContext(AuthContext);
+  const [role, setRole] = useState(null);
+  const [roleLoading, setRoleLoading] = useState(true);
+  const [roleError, setRoleError] = useState(null);
 
-  const { data: role, isLoading: roleLoading } = useQuery({
-    queryKey: ['userRole', user?.email],
-    enabled: !!user?.email,
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/users/role/${user.email}`);
-      return res.data.role;
-    },
-  });
+  useEffect(() => {
+    if (user?.email) {
+      setRoleLoading(true);
+      setRoleError(null);
+      axios.get(`https://insuroo-server.vercel.app/users/role/${user.email}`)
+        .then(res => {
+          if (res.data?.role) {
+            setRole(res.data.role);
+          } else {
+            setRole(null);
+          }
+          setRoleLoading(false);
+        })
+        .catch(err => {
+          setRoleError(err);
+          setRoleLoading(false);
+        });
+    } else {
+      setRole(null);
+      setRoleLoading(false);
+    }
+  }, [user?.email]);
 
-  return { role, roleLoading };
+  return { role, roleLoading, roleError };
 };
 
 export default useUserRole;

@@ -2,32 +2,32 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../Contexts/AuthContext/AuthProvider';
 import { Link } from 'react-router';
-
+import ClaimForm from './ClaimForm';
+ 
 
 const MyApplications = () => {
   const { user } = useContext(AuthContext);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedApp, setSelectedApp] = useState(null); 
 
   const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-useEffect(() => {
-  if (user?.email) {
-    setLoading(true);
-    axios
-      .get(`${BACKEND_URL}/api/policyApplications?userEmail=${user.email}`)
-      .then(res => {
-        console.log('Policy applications:', res.data); 
-        setApplications(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to fetch applications:', err);
-        setLoading(false);
-      });
-  }
-}, [user, BACKEND_URL]);
-
+  useEffect(() => {
+    if (user?.email) {
+      setLoading(true);
+      axios
+        .get(`${BACKEND_URL}/api/policyApplications?userEmail=${user.email}`)
+        .then(res => {
+          setApplications(res.data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Failed to fetch applications:', err);
+          setLoading(false);
+        });
+    }
+  }, [user, BACKEND_URL]);
 
   if (loading) {
     return <div className="text-center mt-10 text-xl">Loading your applications...</div>;
@@ -51,7 +51,6 @@ useEffect(() => {
               <th className="py-3 px-4 text-left">Status</th>
               <th className="py-3 px-4 text-left">Submitted At</th>
               <th className="py-3 px-4 text-left">Premium</th>
-
               <th className="py-3 px-4 text-left">Action</th>
             </tr>
           </thead>
@@ -79,15 +78,23 @@ useEffect(() => {
                 <td className="py-3 px-4">
                   {new Date(app.submittedAt).toLocaleDateString()}
                 </td>
-               <td className="py-3 px-4">{app.basePremiumRate ? `৳${app.basePremiumRate}` : 'N/A'}</td>
-
-                <td className="py-3 px-4">
+                <td className="py-3 px-4">{app.basePremiumRate ? `৳${app.basePremiumRate}` : 'N/A'}</td>
+                <td className="py-3 px-4 flex gap-2">
                   {app.status === 'Approved' && (
-                    <Link to={`/dashboard/payment/${app.policyId}`}>
-                      <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
-                        Pay
+                    <>
+                      <Link to={`/dashboard/payment/${app.policyId}`}>
+                        <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                          Pay
+                        </button>
+                      </Link>
+
+                      <button
+                        onClick={() => setSelectedApp(app)}
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                      >
+                        Claim
                       </button>
-                    </Link>
+                    </>
                   )}
                 </td>
               </tr>
@@ -95,6 +102,14 @@ useEffect(() => {
           </tbody>
         </table>
       </div>
+
+      
+      {selectedApp && (
+  <div className="mt-10">
+    <h3 className="text-2xl font-bold mb-4 text-center">Submit a Claim for {selectedApp.policyTitle}</h3>
+    <ClaimForm application={selectedApp} />
+  </div>
+)}
     </div>
   );
 };

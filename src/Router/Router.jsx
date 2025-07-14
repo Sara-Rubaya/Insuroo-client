@@ -22,9 +22,10 @@ import MakeAdmin from "../Pages/Dashboard/MakeAdmin";
 import ManageApplications from "../Pages/Dashboard/ManageApplications";
 import ManagePolicies from "../Pages/Dashboard/ManagePolicies";
 import ApplyPolicy from "../Pages/Dashboard/ApplyPolicy";
-import ManagePolicyApplications from "../Pages/Dashboard/ManagePolicyApplications";
+
 import PaymentPage from "../Pages/Dashboard/PaymentPage";
 import PaymentStatus from "../Pages/Dashboard/PaymentStatus";
+import ClaimForm from "../Pages/Dashboard/ClaimForm";
 
 
 
@@ -131,10 +132,7 @@ const router = createBrowserRouter([
       path:'applyPolicy/:id',
       Component:ApplyPolicy
     },
-    {
-      path:'managePolicyApplications',
-      Component:ManagePolicyApplications
-    },
+    
     {
       path:'payment/:id',
       Component:PaymentPage
@@ -142,6 +140,10 @@ const router = createBrowserRouter([
     {
       path:'paymentStatus/:transactionId',
       Component: PaymentStatus
+    },
+    {
+      path:'claimForm',
+      Component: ClaimForm
     }
      
     ]
