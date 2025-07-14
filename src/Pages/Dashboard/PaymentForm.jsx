@@ -78,17 +78,18 @@ const PaymentForm = () => {
             paymentMethod: result.paymentIntent.payment_method_types
           };
 
-          const paymentRes = await axiosSecure.post('/payments', paymentData);
-          if (paymentRes.data.insertedId) {
-            await Swal.fire({
-              icon: 'success',
-              title: 'Payment Successful!',
-              html: `<strong>Transaction ID:</strong> <code>${transactionId}</code>`,
-              confirmButtonText: 'Go to Payment Status.'
-            });
+          const paymentRes = await axiosSecure.post('/api/payments', paymentData);
+if (paymentRes.data.insertedId) {
+  await Swal.fire({
+    icon: 'success',
+    title: 'Payment Successful!',
+    html: `<strong>Transaction ID:</strong> <code>${transactionId}</code>`,
+    confirmButtonText: 'Go to Payment Status.'
+  });
 
-            navigate(`/dashboard/paymentStatus/${transactionId}`);
-          }
+  navigate(`/dashboard/paymentStatus/${transactionId}`);
+}
+
         }
       }
     }

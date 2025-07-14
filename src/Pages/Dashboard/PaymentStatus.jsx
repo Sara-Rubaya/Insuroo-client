@@ -12,7 +12,8 @@ const PaymentStatus = () => {
   useEffect(() => {
     const fetchPayment = async () => {
       try {
-        const res = await axiosSecure.get(`/payments/${transactionId}`);
+        const res = await axiosSecure.get(`/api/payments/${transactionId}`);
+
         setPayment(res.data);
       } catch (err) {
         console.error('Error fetching payment status:', err);

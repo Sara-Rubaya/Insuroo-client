@@ -134,7 +134,7 @@ const DashboardLayout = () => {
 </li>
 
 <li>
-  <a href="/dashboard/manage-transactions" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+  <a href="/dashboard/manageTransactions" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
     <svg className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-700 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
       <path d="M3 4h18v2H3zm0 6h12v2H3zm0 6h18v2H3z" />
     </svg>

@@ -26,6 +26,8 @@ import ApplyPolicy from "../Pages/Dashboard/ApplyPolicy";
 import PaymentPage from "../Pages/Dashboard/PaymentPage";
 import PaymentStatus from "../Pages/Dashboard/PaymentStatus";
 import ClaimForm from "../Pages/Dashboard/ClaimForm";
+import ManageTransactions from "../Pages/Dashboard/ManageTransactions";
+import ManageBlogs from "../Pages/Blogs/ManageBlogs";
 
 
 
@@ -144,6 +146,14 @@ const router = createBrowserRouter([
     {
       path:'claimForm',
       Component: ClaimForm
+    },
+    {
+      path:'manageTransactions',
+      Component:ManageTransactions
+    },
+    {
+      path:'manage-blogs',
+      Component:ManageBlogs
     }
      
     ]
