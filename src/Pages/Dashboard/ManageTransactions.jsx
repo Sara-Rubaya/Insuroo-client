@@ -1,6 +1,15 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
 
 const ManageTransactions = () => {
   const axiosSecure = useAxiosSecure();
@@ -16,15 +25,46 @@ const ManageTransactions = () => {
   if (isLoading) return <p>Loading transactions...</p>;
   if (error) return <p>Error loading transactions</p>;
 
+  // Prepare data for the earnings chart
+  // Group payments by date (YYYY-MM-DD) and sum amounts
+  const earningsByDate = payments.reduce((acc, payment) => {
+    if (payment.status !== 'Success') return acc; // only count successful payments
+
+    const date = payment.createdAt
+      ? new Date(payment.createdAt).toISOString().slice(0, 10)
+      : 'Unknown';
+
+    acc[date] = (acc[date] || 0) + payment.amount;
+    return acc;
+  }, {});
+
+  // Convert to array for recharts [{ date: '2025-07-15', amount: 5000 }, ...]
+  const chartData = Object.entries(earningsByDate)
+    .map(([date, amount]) => ({ date, amount }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Manage Transactions</h1>
 
-      {/* Filter buttons (UI only) */}
-      <div className="flex gap-4 mb-6 flex-wrap">
-        <button className="btn btn-outline btn-sm">Filter by Date Range</button>
-        <button className="btn btn-outline btn-sm">Filter by User</button>
-        <button className="btn btn-outline btn-sm">Filter by Policy</button>
+      
+
+      {/* Earnings chart */}
+      <div className="mb-8 p-4 border rounded-lg bg-white shadow">
+        <h2 className="text-xl font-semibold mb-4">Total Earnings Over Time</h2>
+        {chartData.length === 0 ? (
+          <p className="text-gray-500">No earnings data to display.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData} margin={{ top: 10, right: 30, bottom: 0, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip formatter={(value) => `৳${value}`} />
+              <Line type="monotone" dataKey="amount" stroke="#4ade80" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* Transactions table */}
