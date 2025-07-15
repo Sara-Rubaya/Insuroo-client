@@ -30,8 +30,12 @@ import ManageTransactions from "../Pages/Dashboard/ManageTransactions";
 import ManageBlogs from "../Pages/Blogs/ManageBlogs";
 import AddBlogs from "../Pages/Blogs/AddBlogs";
 import Blog from "../Pages/Blogs/Blogs";
-import EarningsChart from "../Pages/Dashboard/EarningsChart";
 import AssignedCustomers from "../Pages/Dashboard/AssignedCustomers";
+import FeaturedAgents from "../Pages/FeaturedAgents";
+import Contact from "../Components/Home/Contact";
+import AdminRoute from "./AdminRoute";
+import AgentRoute from "./AgentRoute";
+
 
 
 
@@ -92,6 +96,18 @@ const router = createBrowserRouter([
         path: 'be-an-agent',
         Component: BeAgent,
       },
+      {
+        path:'agent',
+        Component:FeaturedAgents
+      },
+      {
+        path:'contact',
+        Component:Contact
+      },
+      {
+      path:'blogs',
+      Component:Blog
+    },
       
     
     ],
@@ -107,31 +123,35 @@ const router = createBrowserRouter([
         Component:DashboardLayout
       },
      
+      // admin
       {
         path:'make-agent',
-        Component: MakeAgent
+        element:<AdminRoute><MakeAgent></MakeAgent></AdminRoute>
 
       },
-    {
-      path:'myPolicies',
-      Component: MyApplications
-    },
+    
     {
       path: 'manageUsers',
-      Component: ManageUsers
+      element:<AdminRoute><ManageUsers></ManageUsers></AdminRoute>
     },
     {
       path:'makeAdmin',
-      Component: MakeAdmin
+      element:<AdminRoute><MakeAdmin></MakeAdmin></AdminRoute>
     },
     {
       path:'manageApplications',
-      Component:ManageApplications
+      element:<AdminRoute><ManageApplications></ManageApplications></AdminRoute>
     },
     {
       path:'managePolicy',
-      Component:ManagePolicies
+      element:<AdminRoute><ManagePolicies></ManagePolicies></AdminRoute>
     },
+    {
+      path:'manageTransactions',
+     element:<AdminRoute><ManageTransactions></ManageTransactions></AdminRoute>
+    },
+
+    //customer
     {
       path:'applyPolicy/:id',
       Component:ApplyPolicy
@@ -149,31 +169,29 @@ const router = createBrowserRouter([
       path:'claimForm',
       Component: ClaimForm
     },
-    {
-      path:'manageTransactions',
-      Component:ManageTransactions
+     {
+      path:'myPolicies',
+      Component: MyApplications
     },
+    
+
+    //agent
     {
       path:'addBlogs',
-      Component:AddBlogs
+      element:<AgentRoute><AddBlogs></AddBlogs></AgentRoute>
     },
     {
       path:'manage-blogs',
-      Component:ManageBlogs
+      element:<AgentRoute><ManageBlogs></ManageBlogs></AgentRoute>
     },
-    {
-      path:'blogs',
-      Component:Blog
-    },
-    {
-      path:'earningChart',
-       Component: EarningsChart
-    },
+    
+    
     {
       path:'assignedCustomers',
-      Component:AssignedCustomers
+     element:<AgentRoute><AssignedCustomers></AssignedCustomers></AgentRoute>
       
-    }
+    },
+   
      
     ]
   }

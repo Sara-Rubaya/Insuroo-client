@@ -115,20 +115,31 @@ const MakeAgent = () => {
       <h2 className="text-3xl font-bold mb-6 text-center">Manage Agents</h2>
 
       {/* Tabs */}
-      <div className="tabs justify-center mb-6">
-        <button
-          className={`tab tab-lg tab-bordered ${selectedTab === "pending" ? "tab-active" : ""}`}
-          onClick={() => setSelectedTab("pending")}
-        >
-          Pending Applications
-        </button>
-        <button
-          className={`tab tab-lg tab-bordered ${selectedTab === "approved" ? "tab-active" : ""}`}
-          onClick={() => setSelectedTab("approved")}
-        >
-          All Current Agents
-        </button>
-      </div>
+<div className="flex justify-center mb-6 gap-4">
+  <button
+    className={`tab tab-lg rounded-md px-6 py-2 font-semibold transition-colors duration-300
+      ${
+        selectedTab === "pending"
+          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+          : "bg-gray-200 text-gray-700 hover:bg-purple-300 hover:text-white"
+      }`}
+    onClick={() => setSelectedTab("pending")}
+  >
+    Pending Applications
+  </button>
+  <button
+    className={`tab tab-lg rounded-md px-6 py-2 font-semibold transition-colors duration-300
+      ${
+        selectedTab === "approved"
+          ? "bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-lg"
+          : "bg-gray-200 text-gray-700 hover:bg-green-400 hover:text-white"
+      }`}
+    onClick={() => setSelectedTab("approved")}
+  >
+    All Current Agents
+  </button>
+</div>
+
 
       {/* Pending Tab */}
       {selectedTab === "pending" && (
