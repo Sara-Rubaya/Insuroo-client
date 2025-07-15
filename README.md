@@ -143,4 +143,6 @@ We are a tech-forward life insurance startup dedicated to making insurance acces
 ---
 
 ## 🧑‍💻 Admin Login Credentials
+email:sara@admin.com
+pass:123456
 
