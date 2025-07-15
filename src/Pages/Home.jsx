@@ -4,6 +4,8 @@ import Benefits from '../Components/Home/Benefits';
 import CustomerReviews from '../Components/Home/CustomerReviews';
 import PopularPolicies from '../Components/PopularPolicy';
 import Blog from './Blogs/Blogs';
+import NewsletterSubscription from './ NewsletterSubscription';
+import FeaturedAgents from './FeaturedAgents';
 
 
 const Home = () => {
@@ -13,7 +15,9 @@ const Home = () => {
             <PopularPolicies></PopularPolicies>
             <Benefits></Benefits>
             <CustomerReviews></CustomerReviews>
-            <Blog></Blog>
+            <Blog ></Blog>
+            <NewsletterSubscription></NewsletterSubscription>
+            <FeaturedAgents></FeaturedAgents>
         </div>
        
     );

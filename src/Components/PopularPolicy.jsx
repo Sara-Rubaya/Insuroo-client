@@ -1,63 +1,54 @@
 import React, { useEffect, useState } from 'react';
 
 import axios from 'axios';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
 const PopularPolicies = () => {
-  const [policies, setPolicies] = useState([]);
-  const navigate = useNavigate();
-  const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const [popularPolicies, setPopularPolicies] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${BACKEND_URL}/api/policies/popular`)
-      .then((res) => {
-        setPolicies(res.data);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch popular policies:', err);
-      });
-  }, [BACKEND_URL]);
+    axios.get('https://insuroo-server.vercel.app/policies/popular')
+      .then(res => setPopularPolicies(res.data))
+      .catch(err => console.error('Error fetching popular policies:', err));
+  }, []);
 
   return (
-    <div className="py-18 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl text-center text-gray-900 dark:text-white font-bold mb-8">
-          Popular <span className="text-purple-700">Policies</span>
+    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <h2 className="text-4xl font-bold text-center mb-10 text-gray-800 dark:text-white">
+          Popular <span className="text-pink-600">Policies</span>
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-          {policies.map((policy) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {popularPolicies.map(policy => (
             <div
               key={policy._id}
-              className="bg-base-100 border-base-300 rounded-lg p-6 shadow-2xl hover:shadow-md transition"
+              className="rounded-lg p-6 shadow border bg-white dark:bg-gray-800 flex flex-col justify-between"
             >
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
                 {policy.title}
               </h3>
-              <p className="mb-1 text-gray-800 dark:text-gray-300">
-                <strong className="text-gray-700 dark:text-gray-200">Coverage:</strong>{' '}
-                {policy.coverage || 'N/A'}
+              <p className="text-gray-600 dark:text-gray-300">
+                💵 Coverage: <span className="font-medium">{policy.coverageAmount}</span>
               </p>
-              <p className="mb-1 text-gray-800 dark:text-gray-300">
-                <strong className="text-gray-700 dark:text-gray-200">Term:</strong>{' '}
-                {policy.termLength || 'N/A'}
+              <p className="text-gray-600 dark:text-gray-300">
+                📆 Duration: <span className="font-medium">{policy.termDuration}</span>
               </p>
-              <p className="mb-4 text-gray-800 dark:text-gray-300">
-                <strong className="text-gray-700 dark:text-gray-200">Visits:</strong>{' '}
-                {policy.visits || 0}
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                ⭐ Popularity: <span className="font-medium">{policy.visits || 0} visits</span>
               </p>
-              <button
-                onClick={() => navigate(`/policy/${policy._id}`)}
-                className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-2 rounded hover:opacity-90"
+
+              <Link
+                to={`/policy/${policy._id}`}
+                className="mt-auto bg-pink-600 text-white text-center px-4 py-2 rounded hover:bg-pink-700"
               >
                 View Details
-              </button>
+              </Link>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

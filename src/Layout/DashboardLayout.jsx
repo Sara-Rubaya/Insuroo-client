@@ -143,7 +143,7 @@ const DashboardLayout = () => {
 </li>
 
 <li>
-  <a href="/dashboard/earnings-chart" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+  <a href="/dashboard/earningChart" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
     <svg className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-700 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
       <path d="M4 22h16v-2H4v2zM7 13h2v5H7v-5zm4-3h2v8h-2V10zm4-4h2v12h-2V6z" />
     </svg>
@@ -156,7 +156,7 @@ const DashboardLayout = () => {
 {/* agent */}
 
 <li>
-  <a href="/dashboard/assigned-customers" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+  <a href="/dashboard/assignedCustomers" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
     <svg className="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-700 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
       <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z" />
     </svg>

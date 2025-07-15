@@ -30,6 +30,8 @@ import ManageTransactions from "../Pages/Dashboard/ManageTransactions";
 import ManageBlogs from "../Pages/Blogs/ManageBlogs";
 import AddBlogs from "../Pages/Blogs/AddBlogs";
 import Blog from "../Pages/Blogs/Blogs";
+import EarningsChart from "../Pages/Dashboard/EarningsChart";
+import AssignedCustomers from "../Pages/Dashboard/AssignedCustomers";
 
 
 
@@ -61,6 +63,7 @@ const router = createBrowserRouter([
         path: 'faq',
         Component: FAQsPage,
       },
+     
       {
         path: 'add-policy',
         Component: () => (
@@ -161,6 +164,15 @@ const router = createBrowserRouter([
     {
       path:'blogs',
       Component:Blog
+    },
+    {
+      path:'earningChart',
+       Component: EarningsChart
+    },
+    {
+      path:'assignedCustomers',
+      Component:AssignedCustomers
+      
     }
      
     ]

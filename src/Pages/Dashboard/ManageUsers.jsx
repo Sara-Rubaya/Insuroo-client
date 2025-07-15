@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
@@ -20,11 +19,20 @@ const ManageUsers = () => {
     try {
       const res = await axiosSecure.patch(`/api/users/${id}/role`, { role: newRole });
       if (res.data.modifiedCount > 0) {
-        Swal.fire("Updated!", `User role changed to ${newRole}`, "success");
+        // Fix: Use icon as string, not as 3rd param
+        Swal.fire({
+          icon: "success",
+          title: "Updated!",
+          text: `User role changed to ${newRole}`,
+        });
         refetch();
       }
     } catch (err) {
-      Swal.fire("Error", "Failed to update user role", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err?.message || "Failed to update user role",
+      });
     }
   };
 
@@ -43,11 +51,19 @@ const ManageUsers = () => {
       try {
         const res = await axiosSecure.delete(`/api/users/${id}`);
         if (res.data.deletedCount > 0) {
-          Swal.fire("Deleted!", "User has been deleted.", "success");
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "User has been deleted.",
+          });
           refetch();
         }
       } catch (err) {
-        Swal.fire("Error", "Failed to delete user", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: err?.message || "Failed to delete user",
+        });
       }
     }
   };
