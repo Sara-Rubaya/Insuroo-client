@@ -11,6 +11,8 @@ const ManageUsers = () => {
     queryFn: async () => {
       const res = await axiosSecure.get("/api/users");
       return res.data;
+      
+
     },
   });
 
