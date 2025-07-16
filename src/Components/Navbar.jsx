@@ -29,7 +29,7 @@ const Navbar = () => {
       <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
         {/* Logo */}
         <Link to='/' className='flex items-center space-x-3 rtl:space-x-reverse'>
-          <img src='https://flowbite.com/docs/images/logo.svg' className='h-8' alt='Logo' />
+          <img src='https://i.ibb.co/xK0tyB1q/Whats-App-Image-2025-07-13-at-22-52-57.jpg' className='h-8' alt='Logo' />
           <span className='self-center text-2xl font-semibold whitespace-nowrap dark:text-white'>
             Insuroo
           </span>

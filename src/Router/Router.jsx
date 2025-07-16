@@ -35,6 +35,8 @@ import FeaturedAgents from "../Pages/FeaturedAgents";
 import Contact from "../Components/Home/Contact";
 import AdminRoute from "./AdminRoute";
 import AgentRoute from "./AgentRoute";
+import Error from "../Pages/Error";
+import Payment from "../Pages/Dashboard/Payment";
 
 
 
@@ -108,6 +110,10 @@ const router = createBrowserRouter([
       path:'blogs',
       Component:Blog
     },
+    {
+      path:'*',
+      Component: Error
+    }
       
     
     ],
@@ -164,6 +170,10 @@ const router = createBrowserRouter([
     {
       path:'paymentStatus/:transactionId',
       Component: PaymentStatus
+    },
+    {
+      path:'payment',
+      Component: Payment
     },
     {
       path:'claimForm',

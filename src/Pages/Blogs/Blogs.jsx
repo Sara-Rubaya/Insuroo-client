@@ -13,21 +13,39 @@ const Blog = () => {
       .catch((err) => console.error('Failed to fetch blogs:', err));
   }, []);
 
-  const openModal = async (blog) => {
-    try {
-      await axios.patch(`https://insuroo-server.vercel.app/blogs/${blog._id}`);
-      const res = await axios.get(`https://insuroo-server.vercel.app/blogs/${blog._id}`);
-      setSelectedBlog(res.data);
-      setIsModalOpen(true);
+  const openModal = (blog) => {
+    // Immediately increment totalVisit locally for blog in blogs state
+    setBlogs((prev) =>
+      prev.map((b) =>
+        b._id === blog._id
+          ? { ...b, totalVisit: (b.totalVisit || 0) + 1 }
+          : b
+      )
+    );
 
-      setBlogs((prev) =>
-        prev.map((b) =>
-          b._id === blog._id ? { ...b, totalVisit: (b.totalVisit || 0) + 1 } : b
-        )
+    // Also update selectedBlog with incremented totalVisit to reflect count in modal immediately
+    setSelectedBlog({ ...blog, totalVisit: (blog.totalVisit || 0) + 1 });
+    setIsModalOpen(true);
+
+    // Send PATCH request to increment visit count on server
+    axios
+      .patch(`https://insuroo-server.vercel.app/blogs/${blog._id}`)
+      .then(() =>
+        // Fetch updated blog data to update modal content in case of other changes
+        axios.get(`https://insuroo-server.vercel.app/blogs/${blog._id}`)
+      )
+      .then((res) => {
+        setSelectedBlog(res.data);
+        // Update blogs state again with fresh data from backend (in case server changed anything else)
+        setBlogs((prev) =>
+          prev.map((b) =>
+            b._id === blog._id ? { ...b, totalVisit: res.data.totalVisit } : b
+          )
+        );
+      })
+      .catch((err) =>
+        console.error('Error updating visit count or fetching blog:', err)
       );
-    } catch (err) {
-      console.error('Error updating visit count or fetching blog:', err);
-    }
   };
 
   const closeModal = () => {
@@ -46,7 +64,7 @@ const Blog = () => {
   };
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+    <section data-aos="fade-right" className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <h1 className="text-5xl font-bold mb-10 text-center text-gray-800 dark:text-white">
           <span className="text-pink-600">Blogs</span>
@@ -99,8 +117,13 @@ const Blog = () => {
         {/* Modal */}
         {isModalOpen && selectedBlog && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 flex items-center justify-center z-50"
             onClick={closeModal}
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(5px)',
+              WebkitBackdropFilter: 'blur(5px)',
+            }}
           >
             <div
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-3xl w-full p-6 relative"

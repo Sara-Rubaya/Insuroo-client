@@ -13,7 +13,7 @@ const PopularPolicies = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+    <section data-aos="fade-left" className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-10 text-gray-800 dark:text-white">
           Popular <span className="text-pink-600">Policies</span>

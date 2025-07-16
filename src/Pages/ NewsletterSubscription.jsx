@@ -25,7 +25,7 @@ const NewsletterSubscription = () => {
   };
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+    <section data-aos="fade-left" className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-xl mx-auto px-4">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8">
           <h2 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">

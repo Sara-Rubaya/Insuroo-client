@@ -69,8 +69,7 @@ const CustomerReviews = () => {
   };
 
   return (
-    <section data-aos="fade-up"
-     data-aos-anchor-placement="top-center" className="py-16 bg-gray-50 dark:bg-gray-900">
+    <section data-aos="fade-left"className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-white">
           What Our Customers Say

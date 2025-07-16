@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 const useAxiosSecure = () => {
   const axiosSecure = axios.create({
     baseURL: `https://insuroo-server.vercel.app`,
-    withCredentials: true, // for cookie-based auth
+    withCredentials: true, 
   });
 
   useEffect(() => {
-    // You can optionally add interceptors here if needed
+    
     axiosSecure.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token'); // optional if using cookies
+        const token = localStorage.getItem('access-token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
