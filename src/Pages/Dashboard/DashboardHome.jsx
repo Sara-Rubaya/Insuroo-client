@@ -7,6 +7,7 @@ import AdminDashboard from './AdminDashboard';
 import useUserRole from '../../../Hooks/useUserRole';
 import Loading from '../../../Component/Loading';
 import Forbidden from '../Forbidden';
+import AdminDashboardHome from './AdminDashboardHome';
 
 const DashboardHome = () => {
   const { role, roleLoading, roleError } = useUserRole();
@@ -24,7 +25,7 @@ const DashboardHome = () => {
   } else if (role === 'agent') {
     return <AgentDashboard />;
   } else if (role === 'admin') {
-    return <AdminDashboard />;
+    return <AdminDashboardHome></AdminDashboardHome>;
   } else {
     return <Forbidden />;
   }

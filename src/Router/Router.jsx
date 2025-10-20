@@ -1,4 +1,3 @@
-
 import RootLayout from "../Layout/RootLayout";
 import Home from "../Pages/Home";
 import Login from "../Pages/Login";
@@ -37,175 +36,151 @@ import AdminRoute from "./AdminRoute";
 import AgentRoute from "./AgentRoute";
 import Error from "../Pages/Error";
 import Payment from "../Pages/Dashboard/Payment";
+import AdminDashboardHome from "../Pages/Dashboard/AdminDashboardHome";
+import AgentDashboard from "../DashBoardHome/AgentDashboard";
+import CustomerDashboard from "../DashBoardHome/CustomerDashboard";
+import useUserRole from "../Hooks/useUserRole";
 
+// ----------------- Role-based Dashboard Home -----------------
+const DashboardHome = () => {
+  const { role, roleLoading } = useUserRole();
+  if (roleLoading) return <div className="text-center pt-32">Loading...</div>;
 
+  if (role === "admin") return <AdminDashboardHome />;
+  if (role === "agent") return <AgentDashboard />;
+  if (role === "customer") return <CustomerDashboard />;
+  return <div className="text-center pt-32">Role not recognized</div>;
+};
 
-
-
-
+// ----------------- Router -----------------
 const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
     children: [
-      {
-        index: true,
-        Component: Home,
+      { index: true, 
+        Component: Home 
+      },
+      { path: "login", 
+        Component: Login 
+      },
+      { path: "register", 
+        Component: Register 
+      },
+      { path: "profile", 
+        Component: ProfilePage 
+      },
+      { path: "faq", 
+        Component: FAQsPage 
       },
       {
-        path: 'login',
-        Component: Login,
-      },
-      {
-        path: 'register',
-        Component: Register,
-      },
-      
-      {
-        path: 'profile',
-        Component: ProfilePage,
-      },
-      {
-        path: 'faq',
-        Component: FAQsPage,
-      },
-     
-      {
-        path: 'add-policy',
+        path: "add-policy",
         Component: () => (
           <PrivateRoute>
             <AddPolicy />
           </PrivateRoute>
         ),
       },
-      {
-        path: 'all-policies',
-        Component: AllPolicies,
+      { path: "all-policies",
+         Component: AllPolicies 
+        },
+      { path: "policy/:id", 
+        Component: PolicyDetails 
       },
-      {
-        path: "policy/:id",
-        Component: PolicyDetails,
+      { path: "quote", 
+        Component: QuotePage 
       },
-      {
-        path: 'quote',
-        Component: QuotePage,
+      { path: "apply", 
+        Component: ApplicationFormPage 
       },
-      {
-        path: 'apply',
-        Component: ApplicationFormPage,
+      { path: "be-an-agent", 
+        Component: BeAgent 
       },
-      {
-        path: 'be-an-agent',
-        Component: BeAgent,
+      { path: "agent", 
+        Component: FeaturedAgents 
       },
-      {
-        path:'agent',
-        Component:FeaturedAgents
+      { path: "contact", 
+        Component: Contact 
       },
-      {
-        path:'contact',
-        Component:Contact
+      { path: "blogs", 
+        Component: Blog 
       },
-      {
-      path:'blogs',
-      Component:Blog
-    },
-    {
-      path:'*',
-      Component: Error
-    }
-      
-    
+      { path: "*", 
+        Component: Error 
+      },
     ],
   },
+
+  // ------------------- Dashboard Routes -------------------
   {
-    path: 'dashboard',
-    element: <PrivateRoute>
-      <DashboardLayout></DashboardLayout>
-    </PrivateRoute>,
-    children:[
+    path: "dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
+    children: [
+      // ✅ Default dashboard home based on role
       {
         index: true,
-        Component:DashboardLayout
+        element: <DashboardHome />,
       },
-     
-      // admin
-      {
-        path:'make-agent',
-        element:<AdminRoute><MakeAgent></MakeAgent></AdminRoute>
 
+      // ✅ Admin routes
+      { path: "admin-home",
+         element: <AdminRoute><AdminDashboardHome /></AdminRoute> 
+        },
+      { path: "make-agent", 
+        element: <AdminRoute><MakeAgent /></AdminRoute> 
       },
-    
-    {
-      path: 'manageUsers',
-      element:<AdminRoute><ManageUsers></ManageUsers></AdminRoute>
-    },
-    {
-      path:'makeAdmin',
-      element:<AdminRoute><MakeAdmin></MakeAdmin></AdminRoute>
-    },
-    {
-      path:'manageApplications',
-      element:<AdminRoute><ManageApplications></ManageApplications></AdminRoute>
-    },
-    {
-      path:'managePolicy',
-      element:<AdminRoute><ManagePolicies></ManagePolicies></AdminRoute>
-    },
-    {
-      path:'manageTransactions',
-     element:<AdminRoute><ManageTransactions></ManageTransactions></AdminRoute>
-    },
+      { path: "manageUsers", 
+        element: <AdminRoute><ManageUsers /></AdminRoute> 
+      },
+      { path: "makeAdmin", 
+        element: <AdminRoute><MakeAdmin /></AdminRoute> 
+      },
+      { path: "manageApplications",
+         element: <AdminRoute><ManageApplications /></AdminRoute>
+         },
+      { path: "managePolicy", 
+        element: <AdminRoute><ManagePolicies /></AdminRoute> 
+      },
+      { path: "manageTransactions", 
+        element: <AdminRoute><ManageTransactions /></AdminRoute> 
+      },
 
-    //customer
-    {
-      path:'applyPolicy/:id',
-      Component:ApplyPolicy
-    },
-    
-    {
-      path:'payment/:id',
-      Component:PaymentPage
-    },
-    {
-      path:'paymentStatus/:transactionId',
-      Component: PaymentStatus
-    },
-    {
-      path:'payment',
-      Component: Payment
-    },
-    {
-      path:'claimForm',
-      Component: ClaimForm
-    },
-     {
-      path:'myPolicies',
-      Component: MyApplications
-    },
-    
+      // ✅ Customer routes
+      { path: "applyPolicy/:id", 
+        Component: ApplyPolicy 
+      },
+      { path: "payment/:id",
+         Component: PaymentPage 
+        },
+      { path: "paymentStatus/:transactionId", 
+        Component: PaymentStatus 
+      },
+      { path: "payment",
+         Component: Payment 
+        },
+      { path: "claimForm", 
+        Component: ClaimForm 
+      },
+      { path: "myPolicies",
+         Component: MyApplications 
+        },
 
-    //agent
-    {
-      path:'addBlogs',
-      element:<AgentRoute><AddBlogs></AddBlogs></AgentRoute>
-    },
-    {
-      path:'manage-blogs',
-      element:<AgentRoute><ManageBlogs></ManageBlogs></AgentRoute>
-    },
-    
-    
-    {
-      path:'assignedCustomers',
-     element:<AgentRoute><AssignedCustomers></AssignedCustomers></AgentRoute>
-      
-    },
-   
-     
-    ]
-  }
-
+      // ✅ Agent routes
+      { path: "addBlogs",
+         element: <AgentRoute><AddBlogs /></AgentRoute> 
+        },
+      { path: "manage-blogs", 
+        element: <AgentRoute><ManageBlogs /></AgentRoute> 
+      },
+      { path: "assignedCustomers",
+         element: <AgentRoute><AssignedCustomers /></AgentRoute> 
+        },
+    ],
+  },
 ]);
 
 export default router;
