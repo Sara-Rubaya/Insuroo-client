@@ -251,12 +251,10 @@ const DashboardLayout = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="pt-20 pl-64">
-        {/* Outlet renders child routes */}
-        <Outlet />
-        {/* Default role-based home */}
-        {location.pathname === "/dashboard" && renderDashboardHome()}
-      </div>
+     <div className="pt-20 pl-64">
+  {/* Only show Outlet */}
+  {location.pathname !== "/dashboard" ? <Outlet /> : renderDashboardHome()}
+</div>
     </div>
   );
 };
